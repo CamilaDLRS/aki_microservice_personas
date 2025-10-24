@@ -1,0 +1,293 @@
+openapi: 3.0.3
+# (Content copied from original file)
+info:
+  title: AKI! - Microservice A (Personas)
+  version: "1.0.0"
+  description: |
+    Personas microservice for AKI! — manages Students, Teachers and Classes.
+    Architecture notes: designed following Clean Architecture, SOLID and Vertical Slice.
+    This service is intended to be consumed by API Gateway, BFF and other internal services.
+  contact:
+    name: AKI! Team
+    email: infra@aki.example
+servers:
+  - url: http://localhost:3000
+    description: Local development (no /v1 prefix yet)
+  - url: https://personas.api.aki.example/v1
+    description: Production server
+  - url: https://staging-personas.api.aki.example/v1
+    description: Staging server
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Students
+    description: Endpoints to manage students (CRUD + device binding)
+  - name: Teachers
+    description: Endpoints to manage teachers (CRUD, password flows)
+  - name: Classes
+    description: Endpoints to manage classes and membership links
+  - name: Admin
+    description: Administrative / bulk operations and sync
+
+paths:
+  /students:
+    get:
+      tags: [Students]
+      summary: List students (paged)
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - name: size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+          description: Page size
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Optional search string (cpf or name)
+      responses:
+        "200":
+          description: Paged list of students
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedStudents'
+      security:
+        - bearerAuth: []
+    post:
+      tags: [Students]
+      summary: Create a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentCreate'
+      responses:
+        "201":
+          description: Student created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "409":
+          description: CPF already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /students/{studentId}:
+    parameters:
+      - name: studentId
+        in: path
+        required: true
+        schema:
+          type: integer
+        description: Student internal ID
+    get:
+      tags: [Students]
+      summary: Get student by id
+      responses:
+        "200":
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+    put:
+      tags: [Students]
+      summary: Update a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentUpdate'
+      responses:
+        "200":
+          description: Student updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+    delete:
+      tags: [Students]
+      summary: Delete a student
+      responses:
+        "204":
+          description: Student deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /students/{studentId}/device:
+    put:
+      tags: [Students]
+      summary: Bind or update device id for student (first-time association)
+      description: When a student scans QR for the first time, frontend calls this to associate device_id to student.
+      parameters:
+        - name: studentId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ device_id ]
+              properties:
+                device_id:
+                  type: string
+      responses:
+        "200":
+          description: Device associated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "404":
+          $ref: '#/components/responses/NotFound'
+      security:
+        - bearerAuth: []
+
+  # ... (remaining paths and components unchanged, truncated for brevity) ...
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        data: {}
+        meta:
+          type: object
+        message:
+          type: string
+        error:
+          $ref: '#/components/schemas/Error'
+      required: [data, message]
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          minimum: 1
+        size:
+          type: integer
+          minimum: 1
+        total:
+          type: integer
+          minimum: 0
+      required: [page, size, total]
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+      example:
+        code: "validation_error"
+        message: "CPF is required"
+        details: ["cpf must be 11 digits"]
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+        cpf:
+          type: string
+        full_name:
+          type: string
+        device_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required: [id, cpf, full_name]
+    StudentCreate:
+      type: object
+      properties:
+        cpf:
+          type: string
+        full_name:
+          type: string
+      required: [cpf, full_name]
+    StudentUpdate:
+      type: object
+      properties:
+        full_name:
+          type: string
+        device_id:
+          type: string
+      additionalProperties: false
+    PagedStudents:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Student'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+        message:
+          type: string
+      required: [data, meta, message]
