@@ -9,5 +9,6 @@ export interface TeacherProps {
 }
 
 export class Teacher {
-  constructor(public props: TeacherProps) {}
+  constructor(public props: TeacherProps) {
+  }
 }

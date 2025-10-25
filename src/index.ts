@@ -41,7 +41,9 @@ app.get('/health/db', async (_req, res) => {
 const openapiPath = path.join(process.cwd(), 'docs', 'personasSwagger.yaml');
 if (fs.existsSync(openapiPath)) {
   const doc = yaml.parse(fs.readFileSync(openapiPath, 'utf-8'));
-  app.get('/openapi', (_req, res) => res.type('application/yaml').send(fs.readFileSync(openapiPath, 'utf-8')));
+  app.get('/openapi', (_req, res) => {
+    res.type('application/yaml').send(fs.readFileSync(openapiPath, 'utf-8'));
+  });
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(doc));
 }
 

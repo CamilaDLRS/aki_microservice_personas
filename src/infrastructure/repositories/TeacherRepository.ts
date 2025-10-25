@@ -8,17 +8,39 @@ export class TeacherRepository implements ITeacherRepository {
     const created = await TeacherModel.create(data as any);
     return new Teacher(created.toJSON());
   }
+
   async findById(id: number): Promise<Teacher | null> {
     const found = await TeacherModel.findByPk(id);
-    return found ? new Teacher(found.toJSON()) : null;
+    if (found) {
+      return new Teacher(found.toJSON());
+    } else {
+      return null;
+    }
   }
+
   async findPaged(q: TeacherQuery): Promise<PagedResult<Teacher>> {
     const offset = (q.page - 1) * q.size;
-    const { rows, count } = await TeacherModel.findAndCountAll({ limit: q.size, offset, order: [['id', 'ASC']] });
-    return { meta: { page: q.page, size: q.size, total: count }, items: rows.map(r => new Teacher(r.toJSON())) };
+    const { rows, count } = await TeacherModel.findAndCountAll({
+      limit: q.size,
+      offset,
+      order: [['id', 'ASC']]
+    });
+    return {
+      meta: { page: q.page, size: q.size, total: count },
+      items: rows.map(r => new Teacher(r.toJSON()))
+    };
   }
+
   async update(id: number, data: Partial<Teacher['props']>): Promise<Teacher | null> {
-    const found = await TeacherModel.findByPk(id); if (!found) return null; await found.update(data as any); return new Teacher(found.toJSON());
+    const found = await TeacherModel.findByPk(id);
+    if (!found) {
+      return null;
+    }
+    await found.update(data as any);
+    return new Teacher(found.toJSON());
   }
-  async delete(id: number): Promise<boolean> { return (await TeacherModel.destroy({ where: { id } })) > 0; }
+
+  async delete(id: number): Promise<boolean> {
+    return (await TeacherModel.destroy({ where: { id } })) > 0;
+  }
 }

@@ -8,10 +8,10 @@ interface StudentAttributes {
   created_at?: Date;
   updated_at?: Date;
 }
-
 interface StudentCreationAttributes extends Optional<StudentAttributes, 'id'> {}
 
-export class StudentModel extends Model<StudentAttributes, StudentCreationAttributes> implements StudentAttributes {
+export class StudentModel extends Model<StudentAttributes, StudentCreationAttributes>
+  implements StudentAttributes {
   public id!: number;
   public cpf!: string;
   public full_name!: string;
@@ -21,17 +21,41 @@ export class StudentModel extends Model<StudentAttributes, StudentCreationAttrib
 }
 
 export function initStudentModel(sequelize: Sequelize) {
-  StudentModel.init({
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    cpf: { type: DataTypes.STRING(11), allowNull: false, unique: true },
-    full_name: { type: DataTypes.STRING(150), allowNull: false },
-    device_id: { type: DataTypes.STRING(255), allowNull: true },
-    // Use SQL Server literal to avoid timezone string format mismatch (DATETIME vs offset)
-    created_at: { type: DataTypes.DATE, allowNull: false, defaultValue: Sequelize.literal('GETDATE()') },
-    updated_at: { type: DataTypes.DATE, allowNull: false, defaultValue: Sequelize.literal('GETDATE()') }
-  }, {
-    sequelize,
-    tableName: 'students',
-    timestamps: false
-  });
+  StudentModel.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
+      cpf: {
+        type: DataTypes.STRING(11),
+        allowNull: false,
+        unique: true
+      },
+      full_name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+      },
+      device_id: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('GETDATE()')
+      },
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('GETDATE()')
+      }
+    },
+    {
+      sequelize,
+      tableName: 'students',
+      timestamps: false
+    }
+  );
 }

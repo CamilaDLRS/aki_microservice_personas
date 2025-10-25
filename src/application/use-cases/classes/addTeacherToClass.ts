@@ -1,18 +1,25 @@
 import { IClassRepository } from '../../../domain/repositories/IClassRepository';
-import { ITeacherRepository } from '../../../domain/repositories/ITeacherRepository';
+import { IStudentRepository } from '../../../domain/repositories/IStudentRepository';
 import { ApiError } from '../../../shared/errors/ApiError';
 
-export async function addTeacherToClass(
-	classRepo: IClassRepository,
-	teacherRepo: ITeacherRepository,
-	classId: number,
-	teacherId: number
+export async function addStudentToClass(
+  classRepo: IClassRepository,
+  studentRepo: IStudentRepository,
+  classId: number,
+  studentId: number
 ) {
-	const cls = await classRepo.findById(classId);
-	if (!cls) throw new ApiError(404, 'not_found', 'Class not found');
-	const teacher = await teacherRepo.findById(teacherId);
-	if (!teacher) throw new ApiError(404, 'not_found', 'Teacher not found');
-	const existingIds = await classRepo.listTeachers(classId);
-	if (existingIds.includes(teacherId)) throw new ApiError(409, 'conflict', 'Teacher already in class');
-	await classRepo.addTeacher(classId, teacherId);
+  const cls = await classRepo.findById(classId);
+  if (!cls) {
+    throw new ApiError(404, 'not_found', 'Class not found');
+  }
+  const student = await studentRepo.findById(studentId);
+  if (!student) {
+    throw new ApiError(404, 'not_found', 'Student not found');
+  }
+  // Prevent duplicate link (optional optimization)
+  const existingIds = await classRepo.listStudents(classId);
+  if (existingIds.includes(studentId)) {
+    throw new ApiError(409, 'conflict', 'Student already in class');
+  }
+  await classRepo.addStudent(classId, studentId);
 }

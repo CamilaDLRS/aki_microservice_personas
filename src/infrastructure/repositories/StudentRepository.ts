@@ -11,12 +11,20 @@ export class StudentRepository implements IStudentRepository {
 
   async findById(id: number): Promise<Student | null> {
     const found = await StudentModel.findByPk(id);
-    return found ? new Student(found.toJSON()) : null;
+    if (found) {
+      return new Student(found.toJSON());
+    } else {
+      return null;
+    }
   }
 
   async findByCpf(cpf: string): Promise<Student | null> {
     const found = await StudentModel.findOne({ where: { cpf } });
-    return found ? new Student(found.toJSON()) : null;
+    if (found) {
+      return new Student(found.toJSON());
+    } else {
+      return null;
+    }
   }
 
   async findPaged(query: StudentQuery): Promise<PagedResult<Student>> {
@@ -28,7 +36,12 @@ export class StudentRepository implements IStudentRepository {
       ];
     }
     const offset = (query.page - 1) * query.size;
-    const { rows, count } = await StudentModel.findAndCountAll({ where, limit: query.size, offset, order: [['id', 'ASC']] });
+    const { rows, count } = await StudentModel.findAndCountAll({
+      where,
+      limit: query.size,
+      offset,
+      order: [['id', 'ASC']]
+    });
     return {
       meta: { page: query.page, size: query.size, total: count },
       items: rows.map(r => new Student(r.toJSON()))
@@ -37,7 +50,9 @@ export class StudentRepository implements IStudentRepository {
 
   async update(id: number, data: Partial<Student['props']>): Promise<Student | null> {
     const found = await StudentModel.findByPk(id);
-    if (!found) return null;
+    if (!found) {
+      return null;
+    }
     await found.update(data as any);
     return new Student(found.toJSON());
   }
