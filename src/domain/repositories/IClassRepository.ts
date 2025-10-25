@@ -1,7 +1,10 @@
 import { ClassEntity, ClassProps } from '../entities/Class';
 import { PagedResult } from './IStudentRepository';
 
-export interface ClassQuery { page: number; size: number; }
+export interface ClassQuery {
+  page: number;
+  size: number;
+}
 
 export interface IClassRepository {
   create(data: Omit<ClassProps, 'id'>): Promise<ClassEntity>;

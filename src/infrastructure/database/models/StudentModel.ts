@@ -10,8 +10,10 @@ interface StudentAttributes {
 }
 interface StudentCreationAttributes extends Optional<StudentAttributes, 'id'> {}
 
-export class StudentModel extends Model<StudentAttributes, StudentCreationAttributes>
-  implements StudentAttributes {
+export class StudentModel
+  extends Model<StudentAttributes, StudentCreationAttributes>
+  implements StudentAttributes
+{
   public id!: number;
   public cpf!: string;
   public full_name!: string;
@@ -26,36 +28,36 @@ export function initStudentModel(sequelize: Sequelize) {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       cpf: {
         type: DataTypes.STRING(11),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       full_name: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       device_id: {
         type: DataTypes.STRING(100),
-        allowNull: true
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
+        defaultValue: Sequelize.literal('GETDATE()'),
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
-      }
+        defaultValue: Sequelize.literal('GETDATE()'),
+      },
     },
     {
       sequelize,
       tableName: 'students',
-      timestamps: false
+      timestamps: false,
     }
   );
 }

@@ -21,12 +21,12 @@ export class ClassController {
       const size = Number(req.query.size) || 50;
       const result = await listClasses(repo, {
         page,
-        size
+        size,
       });
       res.json({
-        data: result.items.map(i => i.props),
+        data: result.items.map((i) => i.props),
         meta: result.meta,
-        message: 'Classes retrieved'
+        message: 'Classes retrieved',
       });
     } catch (e) {
       next(e);
@@ -39,7 +39,7 @@ export class ClassController {
       res.status(201).json({
         data: c.props,
         meta: null,
-        message: 'Class created'
+        message: 'Class created',
       });
     } catch (e) {
       next(e);
@@ -55,23 +55,27 @@ export class ClassController {
       const teacherIds = await repo.listTeachers(id);
       const studentRepo = new StudentRepository();
       const teacherRepo = new TeacherRepository();
-      const students = await Promise.all(studentIds.map(async sid => {
-        const s = await studentRepo.findById(sid);
-        return s ? s.props : null;
-      }));
-      const teachers = await Promise.all(teacherIds.map(async tid => {
-        const t = await teacherRepo.findById(tid);
-        return t ? t.props : null;
-      }));
+      const students = await Promise.all(
+        studentIds.map(async (sid) => {
+          const s = await studentRepo.findById(sid);
+          return s ? s.props : null;
+        })
+      );
+      const teachers = await Promise.all(
+        teacherIds.map(async (tid) => {
+          const t = await teacherRepo.findById(tid);
+          return t ? t.props : null;
+        })
+      );
       const payload = {
         ...c.props,
-        students: students.filter(s => s !== null),
-        teachers: teachers.filter(t => t !== null)
+        students: students.filter((s) => s !== null),
+        teachers: teachers.filter((t) => t !== null),
       };
       res.json({
         data: payload,
         meta: null,
-        message: 'Class found'
+        message: 'Class found',
       });
     } catch (e) {
       next(e);
@@ -85,7 +89,7 @@ export class ClassController {
       res.json({
         data: c.props,
         meta: null,
-        message: 'Class updated'
+        message: 'Class updated',
       });
     } catch (e) {
       next(e);
@@ -107,14 +111,16 @@ export class ClassController {
       const id = Number(req.params.classId);
       const studentIds = await repo.listStudents(id);
       const studentRepo = new StudentRepository();
-      const students = await Promise.all(studentIds.map(async sid => {
-        const s = await studentRepo.findById(sid);
-        return s ? s.props : null;
-      }));
+      const students = await Promise.all(
+        studentIds.map(async (sid) => {
+          const s = await studentRepo.findById(sid);
+          return s ? s.props : null;
+        })
+      );
       res.json({
-        data: students.filter(s => s !== null),
+        data: students.filter((s) => s !== null),
         meta: null,
-        message: 'Class students'
+        message: 'Class students',
       });
     } catch (e) {
       next(e);
@@ -130,7 +136,7 @@ export class ClassController {
       res.status(201).json({
         data: c?.props || null,
         meta: null,
-        message: 'Student added'
+        message: 'Student added',
       });
     } catch (e) {
       next(e);
@@ -153,14 +159,16 @@ export class ClassController {
       const id = Number(req.params.classId);
       const teacherIds = await repo.listTeachers(id);
       const teacherRepo = new TeacherRepository();
-      const teachers = await Promise.all(teacherIds.map(async tid => {
-        const t = await teacherRepo.findById(tid);
-        return t ? t.props : null;
-      }));
+      const teachers = await Promise.all(
+        teacherIds.map(async (tid) => {
+          const t = await teacherRepo.findById(tid);
+          return t ? t.props : null;
+        })
+      );
       res.json({
-        data: teachers.filter(t => t !== null),
+        data: teachers.filter((t) => t !== null),
         meta: null,
-        message: 'Class teachers'
+        message: 'Class teachers',
       });
     } catch (e) {
       next(e);
@@ -176,7 +184,7 @@ export class ClassController {
       res.status(201).json({
         data: c?.props || null,
         meta: null,
-        message: 'Teacher added'
+        message: 'Teacher added',
       });
     } catch (e) {
       next(e);

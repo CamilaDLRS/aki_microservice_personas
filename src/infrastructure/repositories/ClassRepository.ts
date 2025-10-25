@@ -25,11 +25,11 @@ export class ClassRepository implements IClassRepository {
     const { rows, count } = await ClassModel.findAndCountAll({
       limit: q.size,
       offset,
-      order: [['id', 'ASC']]
+      order: [['id', 'ASC']],
     });
     return {
       meta: { page: q.page, size: q.size, total: count },
-      items: rows.map(r => new ClassEntity(r.toJSON()))
+      items: rows.map((r) => new ClassEntity(r.toJSON())),
     };
   }
 
@@ -49,7 +49,7 @@ export class ClassRepository implements IClassRepository {
   async addStudent(classId: number, studentId: number): Promise<void> {
     await ClassStudentModel.create({
       class_id: classId,
-      student_id: studentId
+      student_id: studentId,
     } as any);
   }
 
@@ -57,15 +57,15 @@ export class ClassRepository implements IClassRepository {
     await ClassStudentModel.destroy({
       where: {
         class_id: classId,
-        student_id: studentId
-      }
+        student_id: studentId,
+      },
     });
   }
 
   async addTeacher(classId: number, teacherId: number): Promise<void> {
     await ClassTeacherModel.create({
       class_id: classId,
-      teacher_id: teacherId
+      teacher_id: teacherId,
     } as any);
   }
 
@@ -73,18 +73,18 @@ export class ClassRepository implements IClassRepository {
     await ClassTeacherModel.destroy({
       where: {
         class_id: classId,
-        teacher_id: teacherId
-      }
+        teacher_id: teacherId,
+      },
     });
   }
 
   async listStudents(classId: number): Promise<number[]> {
     const rows = await ClassStudentModel.findAll({
       where: {
-        class_id: classId
+        class_id: classId,
       },
       attributes: ['student_id'],
-      raw: true
+      raw: true,
     });
     return rows.map((r: any) => r.student_id);
   }
@@ -92,10 +92,10 @@ export class ClassRepository implements IClassRepository {
   async listTeachers(classId: number): Promise<number[]> {
     const rows = await ClassTeacherModel.findAll({
       where: {
-        class_id: classId
+        class_id: classId,
       },
       attributes: ['teacher_id'],
-      raw: true
+      raw: true,
     });
     return rows.map((r: any) => r.teacher_id);
   }

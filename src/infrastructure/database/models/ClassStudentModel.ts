@@ -1,40 +1,41 @@
 import { DataTypes, Sequelize, Model, Optional } from 'sequelize';
 
+
 interface ClassStudentAttributes {
-  id: number;
   class_id: number;
   student_id: number;
+  created_at?: Date;
 }
-interface ClassStudentCreationAttributes extends Optional<ClassStudentAttributes, 'id'> {}
+type ClassStudentCreationAttributes = ClassStudentAttributes;
 
-export class ClassStudentModel extends Model<ClassStudentAttributes, ClassStudentCreationAttributes>
-  implements ClassStudentAttributes {
-  public id!: number;
+export class ClassStudentModel extends Model<ClassStudentAttributes, ClassStudentCreationAttributes> implements ClassStudentAttributes {
   public class_id!: number;
   public student_id!: number;
+  public created_at?: Date;
 }
 
 export function initClassStudentModel(sequelize: Sequelize) {
   ClassStudentModel.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-      },
       class_id: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        primaryKey: true,
       },
       student_id: {
         type: DataTypes.INTEGER,
-        allowNull: false
-      }
+        allowNull: false,
+        primaryKey: true,
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       sequelize,
       tableName: 'class_students',
-      timestamps: false
+      timestamps: false,
     }
   );
 }

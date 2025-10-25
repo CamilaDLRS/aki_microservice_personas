@@ -15,12 +15,12 @@ export class TeacherController {
       const size = Number(req.query.size) || 50;
       const result = await listTeachers(repo, {
         page,
-        size
+        size,
       });
       res.json({
-        data: result.items.map(i => i.props),
+        data: result.items.map((i) => i.props),
         meta: result.meta,
-        message: 'Teachers retrieved'
+        message: 'Teachers retrieved',
       });
     } catch (e) {
       next(e);
@@ -33,7 +33,7 @@ export class TeacherController {
       res.status(201).json({
         data: t.props,
         meta: null,
-        message: 'Teacher created'
+        message: 'Teacher created',
       });
     } catch (e) {
       next(e);
@@ -47,7 +47,7 @@ export class TeacherController {
       res.json({
         data: t.props,
         meta: null,
-        message: 'Teacher found'
+        message: 'Teacher found',
       });
     } catch (e) {
       next(e);
@@ -61,7 +61,7 @@ export class TeacherController {
       res.json({
         data: t.props,
         meta: null,
-        message: 'Teacher updated'
+        message: 'Teacher updated',
       });
     } catch (e) {
       next(e);

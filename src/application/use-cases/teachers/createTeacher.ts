@@ -18,7 +18,7 @@ export async function createTeacher(repo: ITeacherRepository, input: Input) {
     if (!input.password_hash) {
       emitInternalEvent('teacher.password.setup', {
         teacher_id: teacher.props.id,
-        email: teacher.props.email
+        email: teacher.props.email,
       });
     }
     return teacher;

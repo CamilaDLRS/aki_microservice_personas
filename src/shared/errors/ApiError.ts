@@ -16,7 +16,7 @@ export function errorResponse(err: ApiError | Error) {
     return {
       code: err.code,
       message: err.message,
-      details: err.details || []
+      details: err.details || [],
     };
   }
   return { code: 'internal_error', message: err.message || 'Internal Server Error', details: [] };

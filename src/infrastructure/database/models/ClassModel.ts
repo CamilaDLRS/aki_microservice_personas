@@ -8,7 +8,10 @@ interface ClassAttributes {
 }
 interface ClassCreationAttributes extends Optional<ClassAttributes, 'id'> {}
 
-export class ClassModel extends Model<ClassAttributes, ClassCreationAttributes> implements ClassAttributes {
+export class ClassModel
+  extends Model<ClassAttributes, ClassCreationAttributes>
+  implements ClassAttributes
+{
   public id!: number;
   public name!: string;
   public created_at!: Date;
@@ -21,27 +24,27 @@ export function initClassModel(sequelize: Sequelize) {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       name: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
+        defaultValue: Sequelize.literal('GETDATE()'),
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
-      }
+        defaultValue: Sequelize.literal('GETDATE()'),
+      },
     },
     {
       sequelize,
       tableName: 'classes',
-      timestamps: false
+      timestamps: false,
     }
   );
 }

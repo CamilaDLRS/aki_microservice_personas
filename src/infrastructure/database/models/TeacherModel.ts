@@ -11,8 +11,10 @@ interface TeacherAttributes {
 }
 interface TeacherCreationAttributes extends Optional<TeacherAttributes, 'id'> {}
 
-export class TeacherModel extends Model<TeacherAttributes, TeacherCreationAttributes>
-  implements TeacherAttributes {
+export class TeacherModel
+  extends Model<TeacherAttributes, TeacherCreationAttributes>
+  implements TeacherAttributes
+{
   public id!: number;
   public cpf!: string;
   public full_name!: string;
@@ -28,41 +30,41 @@ export function initTeacherModel(sequelize: Sequelize) {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       cpf: {
         type: DataTypes.STRING(11),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       full_name: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       password_hash: {
         type: DataTypes.STRING(100),
-        allowNull: true
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
+        defaultValue: Sequelize.literal('GETDATE()'),
       },
       updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('GETDATE()')
-      }
+        defaultValue: Sequelize.literal('GETDATE()'),
+      },
     },
     {
       sequelize,
       tableName: 'teachers',
-      timestamps: false
+      timestamps: false,
     }
   );
 }

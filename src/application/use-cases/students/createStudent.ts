@@ -20,7 +20,7 @@ export async function createStudent(repo: IStudentRepository, input: Input) {
   const student = await repo.create({
     cpf: input.cpf,
     full_name: input.full_name,
-    device_id: input.device_id
+    device_id: input.device_id,
   });
   return student;
 }

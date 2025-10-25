@@ -1,7 +1,11 @@
 import { IClassRepository } from '../../../domain/repositories/IClassRepository';
 import { ApiError } from '../../../shared/errors/ApiError';
 
-export async function removeTeacherFromClass(repo: IClassRepository, classId: number, teacherId: number) {
+export async function removeTeacherFromClass(
+  repo: IClassRepository,
+  classId: number,
+  teacherId: number
+) {
   const cls = await repo.findById(classId);
   if (!cls) {
     throw new ApiError(404, 'not_found', 'Class not found');

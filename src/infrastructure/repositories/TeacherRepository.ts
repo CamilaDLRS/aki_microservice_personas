@@ -23,11 +23,11 @@ export class TeacherRepository implements ITeacherRepository {
     const { rows, count } = await TeacherModel.findAndCountAll({
       limit: q.size,
       offset,
-      order: [['id', 'ASC']]
+      order: [['id', 'ASC']],
     });
     return {
       meta: { page: q.page, size: q.size, total: count },
-      items: rows.map(r => new Teacher(r.toJSON()))
+      items: rows.map((r) => new Teacher(r.toJSON())),
     };
   }
 

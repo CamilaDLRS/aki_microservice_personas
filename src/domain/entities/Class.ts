@@ -6,6 +6,5 @@ export interface ClassProps {
 }
 
 export class ClassEntity {
-  constructor(public props: ClassProps) {
-  }
+  constructor(public props: ClassProps) {}
 }

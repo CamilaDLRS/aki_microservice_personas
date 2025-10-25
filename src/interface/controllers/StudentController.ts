@@ -19,9 +19,15 @@ export class StudentController {
       const result = await listStudents(repo, {
         page,
         size,
-        q
+        q,
       });
-      res.json(ok(result.items.map(i => i.props), 'Students retrieved', result.meta));
+      res.json(
+        ok(
+          result.items.map((i) => i.props),
+          'Students retrieved',
+          result.meta
+        )
+      );
     } catch (err) {
       next(err);
     }

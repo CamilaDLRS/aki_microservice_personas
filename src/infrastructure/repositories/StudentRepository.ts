@@ -1,4 +1,8 @@
-import { IStudentRepository, PagedResult, StudentQuery } from '../../domain/repositories/IStudentRepository';
+import {
+  IStudentRepository,
+  PagedResult,
+  StudentQuery,
+} from '../../domain/repositories/IStudentRepository';
 import { Student } from '../../domain/entities/Student';
 import { StudentModel } from '../database/models/StudentModel';
 import { Op } from 'sequelize';
@@ -32,7 +36,7 @@ export class StudentRepository implements IStudentRepository {
     if (query.q) {
       where[Op.or] = [
         { cpf: { [Op.like]: `%${query.q}%` } },
-        { full_name: { [Op.like]: `%${query.q}%` } }
+        { full_name: { [Op.like]: `%${query.q}%` } },
       ];
     }
     const offset = (query.page - 1) * query.size;
@@ -40,11 +44,11 @@ export class StudentRepository implements IStudentRepository {
       where,
       limit: query.size,
       offset,
-      order: [['id', 'ASC']]
+      order: [['id', 'ASC']],
     });
     return {
       meta: { page: query.page, size: query.size, total: count },
-      items: rows.map(r => new Student(r.toJSON()))
+      items: rows.map((r) => new Student(r.toJSON())),
     };
   }
 

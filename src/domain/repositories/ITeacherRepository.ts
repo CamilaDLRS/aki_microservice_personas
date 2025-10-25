@@ -1,7 +1,10 @@
 import { Teacher, TeacherProps } from '../entities/Teacher';
 import { PagedResult } from './IStudentRepository';
 
-export interface TeacherQuery { page: number; size: number; }
+export interface TeacherQuery {
+  page: number;
+  size: number;
+}
 
 export interface ITeacherRepository {
   create(data: Omit<TeacherProps, 'id'>): Promise<Teacher>;

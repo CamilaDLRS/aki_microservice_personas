@@ -27,15 +27,15 @@ export async function initSequelize() {
       dialectOptions: {
         options: {
           encrypt,
-          trustServerCertificate: trustCert
-        }
+          trustServerCertificate: trustCert,
+        },
       },
       pool: {
         min: Number(process.env.DB_POOL_MIN) || 1,
         max: Number(process.env.DB_POOL_MAX) || 10,
         idle: Number(process.env.DB_POOL_IDLE) || 10000,
-        acquire: Number(process.env.DB_POOL_ACQUIRE) || 30000
-      }
+        acquire: Number(process.env.DB_POOL_ACQUIRE) || 30000,
+      },
     }
   );
 
@@ -49,22 +49,22 @@ export async function initSequelize() {
   ClassModel.belongsToMany(StudentModel, {
     through: ClassStudentModel,
     foreignKey: 'class_id',
-    otherKey: 'student_id'
+    otherKey: 'student_id',
   });
   StudentModel.belongsToMany(ClassModel, {
     through: ClassStudentModel,
     foreignKey: 'student_id',
-    otherKey: 'class_id'
+    otherKey: 'class_id',
   });
   ClassModel.belongsToMany(TeacherModel, {
     through: ClassTeacherModel,
     foreignKey: 'class_id',
-    otherKey: 'teacher_id'
+    otherKey: 'teacher_id',
   });
   TeacherModel.belongsToMany(ClassModel, {
     through: ClassTeacherModel,
     foreignKey: 'teacher_id',
-    otherKey: 'class_id'
+    otherKey: 'class_id',
   });
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -77,7 +77,7 @@ export async function initSequelize() {
       if (attempt === 3) {
         throw e;
       }
-      await new Promise(r => setTimeout(r, attempt * 1000));
+      await new Promise((r) => setTimeout(r, attempt * 1000));
     }
   }
   // NOTE: No automatic sync. Schema expected to be migrated externally.
