@@ -153,7 +153,33 @@ paths:
       security:
         - bearerAuth: []
 
-  /students/{studentId}/device:
+  /students/device:
+    get:
+      tags: [Students]
+      summary: Get student by device id
+      description: Returns student data for the given device_id. If no student is found, returns 404.
+      parameters:
+        - name: device_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Device ID to search
+      responses:
+        "200":
+          description: Student with matching device found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "404":
+          description: Student with matching device not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
     put:
       tags: [Students]
       summary: Bind or update device id for student (first-time association)

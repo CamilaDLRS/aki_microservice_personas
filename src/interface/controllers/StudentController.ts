@@ -62,6 +62,22 @@ export class StudentController {
     }
   }
 
+  async getByDevice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const deviceId = req.query.device_id as string;
+      if (!deviceId) {
+        return res.status(400).json({ code: 'validation_error', message: 'device_id is required', details: [] });
+      }
+      const student = await repo.findByDeviceId(deviceId);
+      if (!student) {
+        return res.status(404).json({ code: 'not_found', message: 'Student not found', details: [] });
+      }
+      res.json(ok(student.props, 'Student found'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async updateDevice(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.studentId);

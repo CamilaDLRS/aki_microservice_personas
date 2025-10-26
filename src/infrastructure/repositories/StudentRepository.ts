@@ -8,6 +8,10 @@ import { StudentModel } from '../database/models/StudentModel';
 import { Op } from 'sequelize';
 
 export class StudentRepository implements IStudentRepository {
+  async findByDeviceId(deviceId: string): Promise<Student | null> {
+    const found = await StudentModel.findOne({ where: { device_id: deviceId } });
+    return found ? new Student(found.toJSON()) : null;
+  }
   async create(data: Omit<Student['props'], 'id'>): Promise<Student> {
     const created = await StudentModel.create(data as any);
     return new Student(created.toJSON());

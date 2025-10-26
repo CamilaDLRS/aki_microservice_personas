@@ -17,6 +17,12 @@ export async function createStudent(repo: IStudentRepository, input: Input) {
   if (existing) {
     throw new ApiError(409, 'conflict', 'CPF already exists');
   }
+  if (input.device_id) {
+    const deviceOwner = await repo.findByDeviceId(input.device_id);
+    if (deviceOwner) {
+      throw new ApiError(409, 'conflict', 'device_id already assigned to another student');
+    }
+  }
   const student = await repo.create({
     cpf: input.cpf,
     full_name: input.full_name,
