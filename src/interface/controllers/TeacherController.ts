@@ -1,3 +1,5 @@
+import { sendPasswordEmail } from '../../shared/utils/sendPasswordEmail';
+import { recoverPassword } from '../../application/use-cases/teachers/recoverPassword';
 import { Request, Response, NextFunction } from 'express';
 import { TeacherRepository } from '../../infrastructure/repositories/TeacherRepository';
 import { createTeacher } from '../../application/use-cases/teachers/createTeacher';
@@ -30,11 +32,32 @@ export class TeacherController {
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const t = await createTeacher(repo, req.body);
+      // Always send setup email if password_hash is missing
+      if (!req.body.password_hash) {
+        const token = 'SETUP_TOKEN';
+        const expires_at = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        await sendPasswordEmail({
+          teacher_id: t.props.id!,
+          teacher_email: t.props.email,
+          teacher_name: t.props.full_name,
+          token,
+          expires_at,
+        });
+      }
       res.status(201).json({
         data: t.props,
         meta: null,
         message: 'Teacher created',
       });
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async recoverPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await recoverPassword(repo, req.body.teacher_email);
+      res.status(200).json(result);
     } catch (e) {
       next(e);
     }

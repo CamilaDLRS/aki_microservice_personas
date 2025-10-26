@@ -12,4 +12,5 @@ export interface ITeacherRepository {
   findPaged(q: TeacherQuery): Promise<PagedResult<Teacher>>;
   update(id: number, data: Partial<TeacherProps>): Promise<Teacher | null>;
   delete(id: number): Promise<boolean>;
+  findByEmail(email: string): Promise<Teacher | null>;
 }

@@ -12,7 +12,7 @@ info:
 servers:
   - url: https://aki-microservice-personas-hwgjadgqfne2hafb.eastus2-01.azurewebsites.net
     description: Production server
-  - url: http://localhost:3000
+  - url: http://localhost:3002
     description: Local development (no /v1 prefix yet)
 
 security:
@@ -239,6 +239,56 @@ paths:
       security:
         - bearerAuth: []
 
+  /teachers/recover-password:
+    post:
+      tags: [Teachers]
+      summary: Send password recovery email to teacher
+      description: |
+        Triggers a password recovery email for a teacher. Requires teacher_email. If the teacher exists, sends a recovery email using the Azure Function with emailType 'recovery'.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ teacher_email ]
+              properties:
+                teacher_email:
+                  type: string
+                  format: email
+      responses:
+        "200":
+          description: Recovery email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  teacher_email:
+                    type: string
+                  sent_at:
+                    type: string
+                    format: date-time
+        "404":
+          description: Teacher not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "400":
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "500":
+          description: Email provider failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teachers/{teacherId}:
     parameters:
       - name: teacherId

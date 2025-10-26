@@ -18,6 +18,10 @@ const updateSchema = z.object({
   password_hash: z.string().optional().nullable(),
 });
 
+const recoverSchema = z.object({
+  teacher_email: z.string().email(),
+});
+
 function validate(schema: any) {
   return (req: any, _res: any, next: any) => {
     const r = schema.safeParse(req.body);
@@ -37,5 +41,7 @@ router.put('/:teacherId', validate(updateSchema), (req, res, next) =>
   controller.update(req, res, next)
 );
 router.delete('/:teacherId', (req, res, next) => controller.delete(req, res, next));
+
+router.post('/recover-password', validate(recoverSchema), (req, res, next) => controller.recoverPassword(req, res, next));
 
 export default router;

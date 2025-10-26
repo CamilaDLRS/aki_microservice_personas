@@ -31,6 +31,11 @@ export class TeacherRepository implements ITeacherRepository {
     };
   }
 
+  async findByEmail(email: string): Promise<Teacher | null> {
+    const found = await TeacherModel.findOne({ where: { email } });
+    return found ? new Teacher(found.toJSON()) : null;
+  }
+
   async update(id: number, data: Partial<Teacher['props']>): Promise<Teacher | null> {
     const found = await TeacherModel.findByPk(id);
     if (!found) {
