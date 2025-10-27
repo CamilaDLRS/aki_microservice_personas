@@ -88,6 +88,36 @@ paths:
       security:
         - bearerAuth: []
 
+  /students/cpf/{cpf}:
+    parameters:
+      - name: cpf
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 11
+          maxLength: 11
+        description: Student CPF (11 digits)
+    get:
+      tags: [Students]
+      summary: Get student by CPF
+      description: Returns student data for the given CPF. If no student is found, returns 404.
+      responses:
+        "200":
+          description: Student found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
   /students/{studentId}:
     parameters:
       - name: studentId

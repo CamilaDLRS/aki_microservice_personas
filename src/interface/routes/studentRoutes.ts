@@ -35,6 +35,7 @@ function validate(schema: z.ZodSchema<any>) {
 
 router.get('/', (req, res, next) => controller.list(req, res, next));
 router.get('/device', (req, res, next) => controller.getByDevice(req, res, next));
+router.get('/cpf/:cpf', (req, res, next) => controller.getByCpf(req, res, next));
 router.post('/', validate(createSchema), (req, res, next) => controller.create(req, res, next));
 router.get('/:studentId', (req, res, next) => controller.get(req, res, next));
 router.put('/:studentId', validate(updateSchema), (req, res, next) =>

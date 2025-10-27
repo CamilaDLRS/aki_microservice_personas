@@ -7,6 +7,7 @@ import { updateStudent } from '../../application/use-cases/students/updateStuden
 import { deleteStudent } from '../../application/use-cases/students/deleteStudent';
 import { ok } from '../../shared/utils/response';
 import { updateStudentDevice } from '../../application/use-cases/students/updateStudentDevice';
+import { getStudentByCpf } from '../../application/use-cases/students/getStudentByCpf';
 
 const repo = new StudentRepository();
 
@@ -28,6 +29,18 @@ export class StudentController {
           result.meta
         )
       );
+    } catch (err) {
+      next(err);
+    }
+  }
+  async getByCpf(req: Request, res: Response, next: NextFunction) {
+    try {
+      const cpf = req.params.cpf;
+      if (!cpf || cpf.length !== 11) {
+        return res.status(400).json({ code: 'validation_error', message: 'cpf is required and must be 11 digits', details: [] });
+      }
+      const student = await getStudentByCpf(repo, cpf);
+      res.json(ok(student.props, 'Student found'));
     } catch (err) {
       next(err);
     }
@@ -66,11 +79,23 @@ export class StudentController {
     try {
       const deviceId = req.query.device_id as string;
       if (!deviceId) {
-        return res.status(400).json({ code: 'validation_error', message: 'device_id is required', details: [] });
+        return res
+          .status(400)
+          .json({
+            code: 'validation_error',
+            message: 'device_id is required',
+            details: [],
+          });
       }
       const student = await repo.findByDeviceId(deviceId);
       if (!student) {
-        return res.status(404).json({ code: 'not_found', message: 'Student not found', details: [] });
+        return res
+          .status(404)
+          .json({
+            code: 'not_found',
+            message: 'Student not found',
+            details: [],
+          });
       }
       res.json(ok(student.props, 'Student found'));
     } catch (err) {
@@ -81,8 +106,8 @@ export class StudentController {
   async updateDevice(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.studentId);
-      const { device_id } = req.body;
-      const student = await updateStudentDevice(repo, id, device_id);
+      const { device_id: deviceId } = req.body;
+      const student = await updateStudentDevice(repo, id, deviceId);
       res.json(ok(student.props, 'Device associated'));
     } catch (err) {
       next(err);
