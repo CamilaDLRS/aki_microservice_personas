@@ -1,3 +1,4 @@
+// Removed duplicate top-level async login function. Only the class method remains below.
 import { sendPasswordEmail } from '../../shared/utils/sendPasswordEmail';
 import { recoverPassword } from '../../application/use-cases/teachers/recoverPassword';
 import { Request, Response, NextFunction } from 'express';
@@ -11,6 +12,29 @@ import { deleteTeacher } from '../../application/use-cases/teachers/deleteTeache
 const repo = new TeacherRepository();
 
 export class TeacherController {
+  async login(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password } = req.body;
+      const teacher = await repo.findByEmail(email);
+      if (!teacher || !teacher.props.password_hash) {
+        return res.status(401).json({ code: 'invalid_credentials', message: 'Invalid email or password' });
+      }
+      // Simple hash check (replace with bcrypt in production)
+      if (teacher.props.password_hash !== password) {
+        return res.status(401).json({ code: 'invalid_credentials', message: 'Invalid email or password' });
+      }
+      res.json({
+        data: {
+          id: teacher.props.id,
+          full_name: teacher.props.full_name,
+          email: teacher.props.email,
+        },
+        message: 'Login successful',
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
   async list(req: Request, res: Response, next: NextFunction) {
     try {
       const page = Number(req.query.page) || 1;

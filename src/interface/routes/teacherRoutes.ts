@@ -17,9 +17,12 @@ const updateSchema = z.object({
   email: z.string().email().optional(),
   password_hash: z.string().optional().nullable(),
 });
-
 const recoverSchema = z.object({
   teacher_email: z.string().email(),
+});
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
 });
 
 function validate(schema: any) {
@@ -37,11 +40,10 @@ function validate(schema: any) {
 router.get('/', (req, res, next) => controller.list(req, res, next));
 router.post('/', validate(createSchema), (req, res, next) => controller.create(req, res, next));
 router.get('/:teacherId', (req, res, next) => controller.get(req, res, next));
-router.put('/:teacherId', validate(updateSchema), (req, res, next) =>
-  controller.update(req, res, next)
-);
+router.put('/:teacherId', validate(updateSchema), (req, res, next) => controller.update(req, res, next));
 router.delete('/:teacherId', (req, res, next) => controller.delete(req, res, next));
-
 router.post('/recover-password', validate(recoverSchema), (req, res, next) => controller.recoverPassword(req, res, next));
+router.post('/login', validate(loginSchema), (req, res, next) => controller.login(req, res, next));
 
 export default router;
+
