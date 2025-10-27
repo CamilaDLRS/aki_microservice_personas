@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ClassRepository } from '../../infrastructure/repositories/ClassRepository';
+import { ClassTeacherModel } from '../../infrastructure/repositories/ClassRepository';
 import { createClass } from '../../application/use-cases/classes/createClass';
 import { listClasses } from '../../application/use-cases/classes/listClasses';
 import { getClassById } from '../../application/use-cases/classes/getClassById';
@@ -19,15 +20,59 @@ export class ClassController {
     try {
       const page = Number(req.query.page) || 1;
       const size = Number(req.query.size) || 50;
-      const result = await listClasses(repo, {
-        page,
-        size,
-      });
-      res.json({
-        data: result.items.map((i) => i.props),
-        meta: result.meta,
-        message: 'Classes retrieved',
-      });
+      const teacherEmail = req.query.teacher_email as string | undefined;
+      if (teacherEmail) {
+        // Find teacher by email
+        const teacherRepo = new TeacherRepository();
+        const teacher = await teacherRepo.findByEmail(teacherEmail);
+        if (!teacher) {
+          return res.status(404).json({
+            code: 'teacher_not_found',
+            message: 'No teacher found with that email',
+            data: null,
+            meta: null,
+          });
+        }
+        // Find all classes taught by this teacher
+        // Get all class IDs for this teacher
+        const classTeacherRows = await ClassTeacherModel.findAll({
+          where: { teacher_id: teacher.props.id },
+          attributes: ['class_id'],
+          raw: true,
+        });
+        const classIds = classTeacherRows.map((row: any) => row.class_id);
+        if (classIds.length === 0) {
+          return res.json({
+            data: [],
+            meta: { page, size, total: 0 },
+            message: 'No classes found for this teacher',
+          });
+        }
+        // Paginate classes
+        const offset = (page - 1) * size;
+        const pagedIds = classIds.slice(offset, offset + size);
+        const classes = await Promise.all(
+          pagedIds.map(async (id: number) => {
+            const c = await repo.findById(id);
+            return c ? c.props : null;
+          })
+        );
+        return res.json({
+          data: classes.filter((c: any) => c !== null),
+          meta: { page, size, total: classIds.length },
+          message: 'Classes retrieved',
+        });
+      } else {
+        const result = await listClasses(repo, {
+          page,
+          size,
+        });
+        res.json({
+          data: result.items.map((i) => i.props),
+          meta: result.meta,
+          message: 'Classes retrieved',
+        });
+      }
     } catch (e) {
       next(e);
     }

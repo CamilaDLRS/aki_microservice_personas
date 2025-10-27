@@ -5,6 +5,8 @@ import { ClassStudentModel } from '../database/models/ClassStudentModel';
 import { ClassTeacherModel } from '../database/models/ClassTeacherModel';
 import { PagedResult } from '../../domain/repositories/IStudentRepository';
 
+export { ClassTeacherModel };
+
 export class ClassRepository implements IClassRepository {
   async create(data: Omit<ClassEntity['props'], 'id'>): Promise<ClassEntity> {
     const c = await ClassModel.create(data as any);

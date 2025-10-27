@@ -415,7 +415,8 @@ paths:
   /classes:
     get:
       tags: [Classes]
-      summary: List classes
+      summary: List classes (optionally filter by teacher email)
+      description: Returns paged classes, or classes filtered by teacher_email if provided.
       parameters:
         - name: page
           in: query
@@ -430,13 +431,24 @@ paths:
             minimum: 1
             maximum: 200
             default: 50
+        - name: teacher_email
+          in: query
+          schema:
+            type: string
+          description: Filter classes by teacher email
       responses:
         "200":
-          description: Paged classes
+          description: Paged classes or filtered by teacher email
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PagedClasses'
+        "404":
+          description: Teacher not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       security:
         - bearerAuth: []
     post:
@@ -601,6 +613,44 @@ paths:
           description: Student removed
         "404":
           $ref: '#/components/responses/NotFound'
+      security:
+        - bearerAuth: []
+  /classes/{classId}/teachers:
+    post:
+      tags: [Classes]
+      summary: Add a teacher to a class
+      description: Adds a teacher to the class with the given classId.
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ teacher_id ]
+              properties:
+                teacher_id:
+                  type: integer
+      responses:
+        "201":
+          description: Teacher added to class
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassWithMembers'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "409":
+          description: Already linked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
       security:
         - bearerAuth: []
   /classes/{classId}/teachers/{teacherId}:
