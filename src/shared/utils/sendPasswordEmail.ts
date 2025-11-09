@@ -15,7 +15,9 @@ export async function sendPasswordEmail(payload: SendPasswordEmailPayload): Prom
     await axios.post(process.env.AZURE_FUNCTION_URL!, payload, {
       headers: { 'Content-Type': 'application/json' },
     });
-    logger.info(`Password email sent to ${payload.teacher_email} as ${payload.emailType || 'setup'}`);
+    logger.info(
+      `Password email sent to ${payload.teacher_email} as ${payload.emailType || 'setup'}`
+    );
   } catch (error: any) {
     logger.error('Failed to send password email', { error: error?.message, payload });
     throw error;
