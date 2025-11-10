@@ -1,14 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { StudentRepository } from '../../../shared/Infrastructure/repositories/StudentRepository';
-import { getStudentById } from './GetStudentByIdHandler';
-
-const studentRepo = new StudentRepository();
+import { GetStudentByIdHandler } from './GetStudentByIdHandler';
 
 export class GetStudentByIdController {
   async get(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.id;
-      const student = await getStudentById(studentRepo, id);
+      const handler = new GetStudentByIdHandler();
+      const student = await handler.execute(id);
       if (!student) {
         return res.status(404).json({ message: 'Student not found' });
       }

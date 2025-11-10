@@ -1,15 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { ClassRepository } from '../../../shared/Infrastructure/repositories/ClassRepository';
-import { removeTeacherFromClass } from './RemoveTeacherFromClassHandler';
-
-const classRepo = new ClassRepository();
+import { RemoveTeacherFromClassHandler } from './RemoveTeacherFromClassHandler';
 
 export class RemoveTeacherFromClassController {
   async removeTeacher(req: Request, res: Response, next: NextFunction) {
     try {
       const id = Number(req.params.classId);
       const teacherId = Number(req.params.teacherId || req.body.teacher_id);
-      await removeTeacherFromClass(classRepo, id, teacherId);
+      const handler = new RemoveTeacherFromClassHandler();
+      await handler.execute(id, teacherId);
       res.status(204).send();
     } catch (e) {
       next(e);

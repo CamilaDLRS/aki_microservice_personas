@@ -2,23 +2,26 @@ import { IClassRepository } from '../../../shared/domain/repositories/IClassRepo
 import { ITeacherRepository } from '../../../shared/domain/repositories/ITeacherRepository';
 import { ApiError } from '../../../shared/errors/ApiError';
 
-export async function addTeacherToClass(
-  classRepo: IClassRepository,
-  teacherRepo: ITeacherRepository,
-  classId: number,
-  teacherId: number
-) {
-  const cls = await classRepo.findById(classId);
-  if (!cls) {
-    throw new ApiError(404, 'not_found', 'Class not found');
+import { ClassRepository } from '../../../shared/Infrastructure/repositories/ClassRepository';
+import { TeacherRepository } from '../../../shared/Infrastructure/repositories/TeacherRepository';
+export class AddTeacherToClassHandler {
+  constructor(
+    private readonly classRepo: IClassRepository = new ClassRepository(),
+    private readonly teacherRepo: ITeacherRepository = new TeacherRepository()
+  ) {}
+  async execute(classId: number, teacherId: number) {
+    const cls = await this.classRepo.findById(classId);
+    if (!cls) {
+      throw new ApiError(404, 'not_found', 'Class not found');
+    }
+    const teacher = await this.teacherRepo.findById(teacherId);
+    if (!teacher) {
+      throw new ApiError(404, 'not_found', 'Teacher not found');
+    }
+    const existingIds = await this.classRepo.listTeachers(classId);
+    if (existingIds.includes(teacherId)) {
+      throw new ApiError(409, 'conflict', 'Teacher already in class');
+    }
+    await this.classRepo.addTeacher(classId, teacherId);
   }
-  const teacher = await teacherRepo.findById(teacherId);
-  if (!teacher) {
-    throw new ApiError(404, 'not_found', 'Teacher not found');
-  }
-  const existingIds = await classRepo.listTeachers(classId);
-  if (existingIds.includes(teacherId)) {
-    throw new ApiError(409, 'conflict', 'Teacher already in class');
-  }
-  await classRepo.addTeacher(classId, teacherId);
 }

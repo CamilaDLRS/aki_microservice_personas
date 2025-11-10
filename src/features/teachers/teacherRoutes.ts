@@ -1,17 +1,17 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { z, ZodIssue } from 'zod';
 import { ApiError } from '../../shared/errors/ApiError';
-import { createTeacherValidator } from './CreateTeacher/CreateTeacherValidator';
-import { updateTeacherValidator } from './UpdateTeacher/UpdateTeacherValidator';
-import { recoverPasswordValidator } from './RecoverPassword/RecoverPasswordValidator';
-import { loginValidator } from './Login/LoginValidator';
-import { ListTeachersController } from './ListTeachers/ListTeachersController';
-import { CreateTeacherController } from './CreateTeacher/CreateTeacherController';
-import { GetTeacherByIdController } from './GetTeacherById/GetTeacherByIdController';
-import { UpdateTeacherController } from './UpdateTeacher/UpdateTeacherController';
-import { DeleteTeacherController } from './DeleteTeacher/DeleteTeacherController';
-import { RecoverPasswordController } from './RecoverPassword/RecoverPasswordController';
-import { LoginController } from './Login/LoginController';
+import { createTeacherValidator } from './createTeacher/CreateTeacherValidator';
+import { updateTeacherValidator } from './updateTeacher/UpdateTeacherValidator';
+import { recoverPasswordValidator } from './recoverPassword/RecoverPasswordValidator';
+import { loginValidator } from './login/LoginValidator';
+import { ListTeachersController } from './listTeachers/ListTeachersController';
+import { CreateTeacherController } from './createTeacher/CreateTeacherController';
+import { GetTeacherByIdController } from './getTeacherById/GetTeacherByIdController';
+import { UpdateTeacherController } from './updateTeacher/UpdateTeacherController';
+import { DeleteTeacherController } from './deleteTeacher/DeleteTeacherController';
+import { RecoverPasswordController } from './recoverPassword/RecoverPasswordController';
+import { LoginController } from './login/LoginController';
 
 const listTeachersController = new ListTeachersController();
 const createTeacherController = new CreateTeacherController();

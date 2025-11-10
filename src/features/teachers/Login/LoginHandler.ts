@@ -1,12 +1,17 @@
-import { ITeacherRepository } from '../../../shared/domain/repositories/ITeacherRepository';
 import { Teacher } from '../../../shared/domain/entities/Teacher';
 import { ApiError } from '../../../shared/errors/ApiError';
+import { TeacherRepository } from '../../../shared/Infrastructure/repositories/TeacherRepository';
 
-export const login = async (
-  teacherRepo: ITeacherRepository,
-  { email, password }: { email: string; password: string }
-): Promise<Teacher> => {
-  const teacher = await teacherRepo.findByEmail(email);
+const repo = new TeacherRepository();
+
+export const login = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): Promise<Teacher> => {
+  const teacher = await repo.findByEmail(email);
 
   if (!teacher) {
     throw new ApiError(401, 'INVALID_CREDENTIALS', 'Invalid credentials');
@@ -20,4 +25,3 @@ export const login = async (
 
   return teacher;
 };
-

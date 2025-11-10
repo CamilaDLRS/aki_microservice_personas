@@ -1,8 +1,9 @@
-import {
-  IStudentRepository,
-  StudentQuery,
-} from '../../../shared/domain/repositories/IStudentRepository';
+import { StudentQuery, IStudentRepository } from '../../../shared/domain/repositories/IStudentRepository';
+import { StudentRepository } from '../../../shared/Infrastructure/repositories/StudentRepository';
 
-export async function listStudents(repo: IStudentRepository, query: StudentQuery) {
-  return repo.findPaged(query);
+export class ListStudentsHandler {
+  constructor(private readonly repo: IStudentRepository = new StudentRepository()) {}
+  async execute(query: StudentQuery) {
+    return this.repo.findPaged(query);
+  }
 }

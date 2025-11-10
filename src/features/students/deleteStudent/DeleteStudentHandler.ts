@@ -1,24 +1,27 @@
-import { IStudentRepository } from '../../../shared/domain/repositories/IStudentRepository';
 import { ApiError } from '../../../shared/errors/ApiError';
+import { StudentRepository } from '../../../shared/Infrastructure/repositories/StudentRepository';
+import { IStudentRepository } from '../../../shared/domain/repositories/IStudentRepository';
 
-export async function deleteStudent(repo: IStudentRepository, id: number) {
-  try {
-    const ok = await repo.delete(id);
-    if (!ok) {
-      throw new ApiError(404, 'not_found', 'Student not found');
+export class DeleteStudentHandler {
+  constructor(private readonly repo: IStudentRepository = new StudentRepository()) {}
+
+  async execute(id: number) {
+    try {
+      const ok = await this.repo.delete(id);
+      if (!ok) {
+        throw new ApiError(404, 'not_found', 'Student not found');
+      }
+      return ok;
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes('REFERENCE constraint')) {
+        throw new ApiError(
+          409,
+          'conflict',
+          'Cannot delete student: student is enrolled in one or more classes. Remove from all classes before deleting.'
+        );
+      }
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new ApiError(500, 'internal_error', 'Unexpected error deleting student', [msg]);
     }
-    return ok;
-  } catch (err: any) {
-    // Check for FK constraint error (Sequelize or MSSQL)
-    if (err && err.message && err.message.includes('REFERENCE constraint')) {
-      throw new ApiError(
-        409,
-        'conflict',
-        'Cannot delete student: student is enrolled in one or more classes. Remove from all classes before deleting.'
-      );
-    }
-    throw new ApiError(500, 'internal_error', 'Unexpected error deleting student', [
-      err?.message || String(err),
-    ]);
   }
 }

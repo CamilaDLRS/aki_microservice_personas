@@ -10,9 +10,9 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node"],
+  "types": ["node", "jest"],
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": ["src", "jest.config.cjs", "jest.setup.cjs"],
   "exclude": ["node_modules", "dist"]
 }
